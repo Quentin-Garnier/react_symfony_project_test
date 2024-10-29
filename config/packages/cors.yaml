@@ -1,0 +1,8 @@
+nelmio_cors:
+    defaults:
+        allow_origin: ['http://localhost:3000'] # Changez ici pour l'origine de votre front-end
+        allow_headers: ['Content-Type', 'Authorization']
+        allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+        max_age: 3600
+    paths:
+        '^/': # Appliquer à toutes les routes

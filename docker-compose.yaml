@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Conteneur PHP
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=dev
+    depends_on:
+      - mysql
+    networks:
+      - symfony
+
+  # Conteneur de la base de données MySQL
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - symfony
+
+  # Conteneur phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - symfony
+
+  # Conteneur Nginx
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - symfony
+
+# Volumes pour la persistance de la base de données
+volumes:
+  mysql-data:
+
+# Réseau interne pour les conteneurs
+networks:
+  symfony:

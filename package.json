@@ -1,0 +1,20 @@
+{
+  "devDependencies": {
+    "@babel/preset-react": "^7.25.7",
+    "@symfony/webpack-encore": "github:symfony/webpack-encore",
+    "postcss": "^8.4.47",
+    "postcss-loader": "^8.1.1",
+    "webpack-notifier": "^1.15.0"
+  },
+  "scripts": {
+    "dev": "encore dev",
+    "dev-server": "encore dev-server",
+    "build": "encore production",
+    "watch": "encore dev --watch"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@symfony/ux-react": "^1.0.0"
+  }
+}
