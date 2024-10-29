@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const InscriptionForm = () => {
     const [email, setEmail] = useState('');
@@ -9,7 +10,18 @@ const InscriptionForm = () => {
     const [nom, setNom] = useState('');
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Vérifier si l'utilisateur est authentifié et est administrateur
+        const token = localStorage.getItem("token");
+        const user = token ? JSON.parse(localStorage.getItem("user")) : null;
+
+        if (!user || user.is_admin !== 1) {
+            // Rediriger vers la page de connexion ou une autre page si l'utilisateur n'est pas admin
+            navigate("/connection");
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,9 +39,7 @@ const InscriptionForm = () => {
             console.log(data);
 
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/tasks');
+                setError(null);
             } else {
                 setError(data.error || 'Une erreur est survenue');
             }

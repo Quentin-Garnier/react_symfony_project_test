@@ -3,6 +3,7 @@ import CreateTaskForm from "./crud/CreateTaskForm";
 import { Button, Alert } from "react-bootstrap";
 import DeleteTask from "./crud/DeleteTask";
 import UpdateTask from "./crud/UpdateTask";
+import UploadTask from "./UploadTask";
 
 const GetTasks = () => {
     const [error, setError] = useState(null);
@@ -10,6 +11,9 @@ const GetTasks = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
     const token = localStorage.getItem("token");
+    const user = token ? JSON.parse(localStorage.getItem("user")) : null;
+    const isAdmin = user && user.is_admin === 1; // Vérifie si l'utilisateur est un admin
+    const userId = user ? user.user_id : null; // Récupérer l'ID de l'utilisateur
 
     useEffect(() => {
         fetchTasks();
@@ -49,7 +53,7 @@ const GetTasks = () => {
     };
 
     const handleUserChange = (task_id, user_id) => {
-        setSelectedUser({[task_id]: user_id });
+        setSelectedUser({ [task_id]: user_id });
     };
 
     const assignUserToTask = async (task_id) => {
@@ -78,51 +82,61 @@ const GetTasks = () => {
     };
 
     const handleRefresh = () => {
-        fetchTasks(); // Refresh the task list after a new task is created or deleted
+        fetchTasks(); // Rafraîchit la liste des tâches après la création ou la suppression d'une tâche
     };
+
+    // Filtre les tâches selon l'utilisateur connecté
+    const filteredTasks = isAdmin 
+        ? tasks 
+        : tasks.filter(task => task.assigned_users && task.assigned_users.includes(userId));
 
     return (
         <div className="container">
+            <UploadTask />
             <UpdateTask onTaskUpdated={handleRefresh} />
             <CreateTaskForm onTaskCreated={handleRefresh} />
             <h2 className="mt-4">Liste des tâches</h2>
             {error && <Alert variant="danger">{error}</Alert>}
-            {tasks.length > 0 ? (
+            {filteredTasks.length > 0 ? (
                 <table className="table table-striped mt-3">
                     <thead>
                         <tr>
                             <th scope="col">Nom</th>
                             <th scope="col">Description</th>
-                            <th scope="col">Assigner à</th>
+                            {isAdmin && <th scope="col">Assigner à</th>} {/* Colonne conditionnelle */}
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {tasks.map((task) => (
+                        {filteredTasks.map((task) => (
                             <tr key={task.task_id}>
                                 <td>{task.nom}</td>
                                 <td>{task.description}</td>
+                                {isAdmin && ( // Affiche la colonne "Assigner à" uniquement si l'utilisateur est un admin
+                                    <td>
+                                        <select
+                                            className="form-select"
+                                            value={selectedUser[task.task_id] || ""}
+                                            onChange={(e) => handleUserChange(task.task_id, e.target.value)}
+                                        >
+                                            <option value="">Sélectionnez un utilisateur</option>
+                                            {users.map((user) => (
+                                                <option key={user.user_id} value={user.user_id}>
+                                                    {user.nom} {user.prenom} ({user.user_id})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                )}
                                 <td>
-                                    <select
-                                        className="form-select"
-                                        value={selectedUser[task.task_id] || ""}
-                                        onChange={(e) => handleUserChange(task.task_id, e.target.value)}
-                                    >
-                                        <option value="">Sélectionnez un utilisateur</option>
-                                        {users.map((user) => (
-                                            <option key={user.user_id} value={user.user_id}>
-                                                {user.nom} {user.prenom} ({user.user_id})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </td>
-                                <td>
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => assignUserToTask(task.task_id)}
-                                    >
-                                        Assigner
-                                    </Button>
+                                    {isAdmin && ( // Affiche le bouton d'assignation uniquement si l'utilisateur est un admin
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => assignUserToTask(task.task_id)}
+                                        >
+                                            Assigner
+                                        </Button>
+                                    )}
                                     <DeleteTask taskId={task.task_id} onTaskDeleted={handleRefresh} />
                                 </td>
                             </tr>

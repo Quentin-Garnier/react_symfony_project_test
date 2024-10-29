@@ -28,6 +28,10 @@ const ConnectionForm = () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
+
+                // Déclenche un événement personnalisé pour notifier le Header
+                window.dispatchEvent(new Event('authChange'));
+
                 navigate('/tasks');
             } else {
                 setError(data.error || 'Une erreur est survenue');

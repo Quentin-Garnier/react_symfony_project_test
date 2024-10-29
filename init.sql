@@ -47,17 +47,19 @@ CREATE TABLE IF NOT EXISTS `users` (
     `prenom` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
-    `assigned_tasks` JSON DEFAULT NULL
+    `assigned_tasks` JSON DEFAULT NULL,
+    `is_admin` BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
-INSERT INTO `users` (`user_id`, `nom`, `prenom`, `email`, `password`, `assigned_tasks`) VALUES
-('1', 'Dupont', 'Jean', 'jean.dupont@example.com', 'password123', NULL),
-('2', 'Martin', 'Sophie', 'sophie.martin@example.com', 'password456', NULL),
-('3', 'Durand', 'Pierre', 'pierre.durand@example.com', 'password789', NULL),
-('4', 'Leroy', 'Lucie', 'lucie.leroy@example.com', 'password012', NULL),
-('5', 'Moreau', 'Clément', 'clement.moreau@example.com', 'password345', NULL);
+INSERT INTO `users` (`nom`, `prenom`, `email`, `password`, `assigned_tasks`, `is_admin`) VALUES
+('Dupont', 'Jean', 'jean.dupont@example.com', 'password123', NULL, TRUE),
+('Martin', 'Sophie', 'sophie.martin@example.com', 'password456', NULL, FALSE),
+('Durand', 'Pierre', 'pierre.durand@example.com', 'password789', NULL, FALSE),
+('Leroy', 'Lucie', 'lucie.leroy@example.com', 'password012', NULL, FALSE),
+('Moreau', 'Clément', 'clement.moreau@example.com', 'password345', NULL, FALSE);
+
 
 
 
