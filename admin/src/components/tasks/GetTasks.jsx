@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importer useNavigate
 import CreateTaskForm from "./crud/CreateTaskForm";
 import { Button, Alert } from "react-bootstrap";
-import DeleteTask from "./crud/DeleteTask";
+import DeleteTask from "./crud/DeleteTask"; // Gardez cela pour les admins
 import UpdateTask from "./crud/UpdateTask";
-import UploadTask from "./UploadTask";
 
 const GetTasks = () => {
     const [error, setError] = useState(null);
@@ -14,6 +14,7 @@ const GetTasks = () => {
     const user = token ? JSON.parse(localStorage.getItem("user")) : null;
     const isAdmin = user && user.is_admin === 1; // Vérifie si l'utilisateur est un admin
     const userId = user ? user.user_id : null; // Récupérer l'ID de l'utilisateur
+    const navigate = useNavigate(); // Utiliser useNavigate pour la redirection
 
     useEffect(() => {
         fetchTasks();
@@ -90,9 +91,13 @@ const GetTasks = () => {
         ? tasks 
         : tasks.filter(task => task.assigned_users && task.assigned_users.includes(userId));
 
+    const handleRespondClick = (task_id) => {
+        localStorage.setItem("currentTaskId", task_id); // Stocke l'ID de la tâche dans le local storage
+        navigate("/response"); // Redirige vers la page /response
+    };
+
     return (
         <div className="container">
-            <UploadTask />
             <UpdateTask onTaskUpdated={handleRefresh} />
             <CreateTaskForm onTaskCreated={handleRefresh} />
             <h2 className="mt-4">Liste des tâches</h2>
@@ -129,6 +134,16 @@ const GetTasks = () => {
                                     </td>
                                 )}
                                 <td>
+                                    {isAdmin ? ( // Affiche le bouton de suppression si l'utilisateur est un admin
+                                        <DeleteTask taskId={task.task_id} onTaskDeleted={handleRefresh} />
+                                    ) : ( // Affiche le bouton "Répondre" si l'utilisateur n'est pas un admin
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => handleRespondClick(task.task_id)} // Gère le clic sur le bouton Répondre
+                                        >
+                                            Répondre
+                                        </Button>
+                                    )}
                                     {isAdmin && ( // Affiche le bouton d'assignation uniquement si l'utilisateur est un admin
                                         <Button
                                             variant="primary"
@@ -137,7 +152,6 @@ const GetTasks = () => {
                                             Assigner
                                         </Button>
                                     )}
-                                    <DeleteTask taskId={task.task_id} onTaskDeleted={handleRefresh} />
                                 </td>
                             </tr>
                         ))}

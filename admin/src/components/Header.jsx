@@ -41,6 +41,9 @@ const Header = () => {
                     {isAuthenticated && isAdmin && (
                         <Nav.Link as={Link} to="/inscription">Inscription</Nav.Link>
                     )}
+                    {isAuthenticated && isAdmin && (
+                        <Nav.Link as={Link} to="/users">Utilisteurs</Nav.Link>
+                    )}
                     <Nav.Link as={Link} to="/tasks">Tâches</Nav.Link>
                 </Nav>
             </Container>

@@ -174,6 +174,38 @@ Class TasksController extends AbstractController
         }
     }
 
+
+    #[Route('/response', name: 'response', methods: ['POST'])]
+    public function response(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $this->tokenAuthenticator->validateToken($request);
+
+        // Récupérer les données du body de la requête
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier que les champs requis sont bien présents
+        $requiredFields = ['nom', 'description', 'assigned_task', 'responding_user'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field])) {
+                return new JsonResponse(['error' => 'Missing parameter: ' . $field], 400);
+            }
+        }
+
+        // Insérer les données dans la base de données
+        try {
+            $entityManager->getConnection()->insert('responses', [
+                'nom' => $data['nom'],
+                'description' => $data['description'],
+                'assigned_task' => $data['assigned_task'],
+                'responding_user' => $data['responding_user'],
+            ]);
+
+            return new JsonResponse(['success' => 'Response successfully inserted'], 201);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to insert response: ' . $e->getMessage()], 500);
+        }
+    }
+    
 }
 
 ?>
