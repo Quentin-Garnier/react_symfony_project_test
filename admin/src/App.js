@@ -24,6 +24,7 @@ function App() {
           <Route path="/response" element={<Response />} />
           <Route path="/responses/:id" element={<UserResponses />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/manageTasks" element={<ManageTasks />} />
           <Route path='*' element={<div>404</div>} />
         </Routes>
       </Router>
