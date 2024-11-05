@@ -134,6 +134,27 @@ class UsersController extends AbstractController
             return new JsonResponse(['error' => 'Failed to retrieve users: ' . $e->getMessage()], 500);
         }
     }
+
+
+    #[Route('users/{user_id}/toggle-admin', name: 'toggle_admin', methods: ['PUT'])]
+    public function toggleAdmin(EntityManagerInterface $entityManager, $user_id): JsonResponse
+    {
+        try {
+            $user = $entityManager->getConnection()->fetchAssociative('SELECT * FROM users WHERE user_id = ?', [$user_id]);
+
+            if (!$user) {
+                return new JsonResponse(['error' => 'User not found'], 404);
+            }
+
+            $newAdminStatus = !$user['is_admin'] ? 1 : 0;
+
+            $entityManager->getConnection()->update('users', ['is_admin' => $newAdminStatus], ['user_id' => $user_id]);
+
+            return new JsonResponse(['success' => 'User admin status successfully updated'], 200);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to update user admin status: ' . $e->getMessage()], 500);
+        }
+    }
 }
 
 ?>
