@@ -44,6 +44,9 @@ const Header = () => {
                     {isAuthenticated && isAdmin && (
                         <Nav.Link as={Link} to="/users">Utilisteurs</Nav.Link>
                     )}
+                    {isAuthenticated && isAdmin && (
+                        <Nav.Link as={Link} to="/manageTasks">Gérer les tâches</Nav.Link>
+                    )}
                     <Nav.Link as={Link} to="/tasks">Tâches</Nav.Link>
                 </Nav>
             </Container>

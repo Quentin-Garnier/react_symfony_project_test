@@ -10,6 +10,7 @@ import GetTasks from './components/tasks/GetTasks';
 import Response from './components/tasks/Response';
 import Users from './components/Users';
 import UserResponses from './components/UserResponses';
+import ManageTasks from './components/tasks/ManageTasks';
 
 function App() {
   return (

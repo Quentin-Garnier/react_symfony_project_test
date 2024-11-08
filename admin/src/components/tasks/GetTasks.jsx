@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Importer useNavigate
-import CreateTaskForm from "./crud/CreateTaskForm";
+import { useNavigate } from "react-router-dom";
 import { Button, Alert } from "react-bootstrap";
-import DeleteTask from "./crud/DeleteTask"; // Gardez cela pour les admins
-import UpdateTask from "./crud/UpdateTask";
+import DeleteTask from "./crud/DeleteTask";
 
 const GetTasks = () => {
     const [error, setError] = useState(null);
@@ -12,9 +10,9 @@ const GetTasks = () => {
     const [selectedUser, setSelectedUser] = useState({});
     const token = localStorage.getItem("token");
     const user = token ? JSON.parse(localStorage.getItem("user")) : null;
-    const isAdmin = user && user.is_admin === 1; // Vérifie si l'utilisateur est un admin
-    const userId = user ? user.user_id : null; // Récupérer l'ID de l'utilisateur
-    const navigate = useNavigate(); // Utiliser useNavigate pour la redirection
+    const isAdmin = user && user.is_admin === 1;
+    const userId = user ? user.user_id : null;
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTasks();
@@ -39,7 +37,7 @@ const GetTasks = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:8000/users',{
+            const response = await fetch('http://localhost:8000/users', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -82,24 +80,17 @@ const GetTasks = () => {
         }
     };
 
-    const handleRefresh = () => {
-        fetchTasks(); // Rafraîchit la liste des tâches après la création ou la suppression d'une tâche
+    const handleRespondClick = (task_id) => {
+        localStorage.setItem("currentTaskId", task_id);
+        navigate("/response");
     };
 
-    // Filtre les tâches selon l'utilisateur connecté
     const filteredTasks = isAdmin 
         ? tasks 
         : tasks.filter(task => task.assigned_users && task.assigned_users.includes(userId));
 
-    const handleRespondClick = (task_id) => {
-        localStorage.setItem("currentTaskId", task_id); // Stocke l'ID de la tâche dans le local storage
-        navigate("/response"); // Redirige vers la page /response
-    };
-
     return (
         <div className="container">
-            <UpdateTask onTaskUpdated={handleRefresh} />
-            <CreateTaskForm onTaskCreated={handleRefresh} />
             <h2 className="mt-4">Liste des tâches</h2>
             {error && <Alert variant="danger">{error}</Alert>}
             {filteredTasks.length > 0 ? (
@@ -108,8 +99,15 @@ const GetTasks = () => {
                         <tr>
                             <th scope="col">Nom</th>
                             <th scope="col">Description</th>
-                            {isAdmin && <th scope="col">Assigner à</th>} {/* Colonne conditionnelle */}
-                            <th scope="col">Action</th>
+                            {isAdmin && <th scope="col">Assigner à</th>}
+                            {!isAdmin ? 
+                                <th scope="col">Action</th> 
+                                : 
+                                <>
+                                    <th scope="col">Assigner</th>
+                                    <th scope="col">Supprimer</th>
+                                </>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -117,7 +115,7 @@ const GetTasks = () => {
                             <tr key={task.task_id}>
                                 <td>{task.nom}</td>
                                 <td>{task.description}</td>
-                                {isAdmin && ( // Affiche la colonne "Assigner à" uniquement si l'utilisateur est un admin
+                                {isAdmin && (
                                     <td>
                                         <select
                                             className="form-select"
@@ -133,27 +131,32 @@ const GetTasks = () => {
                                         </select>
                                     </td>
                                 )}
-                                <td>
-                                    {isAdmin ? ( // Affiche le bouton de suppression si l'utilisateur est un admin
-                                        <DeleteTask taskId={task.task_id} onTaskDeleted={handleRefresh} />
-                                    ) : ( // Affiche le bouton "Répondre" si l'utilisateur n'est pas un admin
+                                {!isAdmin ? (
+                                    <td>
                                         <Button
-                                            variant="secondary"
-                                            onClick={() => handleRespondClick(task.task_id)} // Gère le clic sur le bouton Répondre
-                                        >
+                                        variant="secondary"
+                                        onClick={() => handleRespondClick(task.task_id)}>
                                             Répondre
                                         </Button>
-                                    )}
-                                    {isAdmin && ( // Affiche le bouton d'assignation uniquement si l'utilisateur est un admin
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => assignUserToTask(task.task_id)}
-                                        >
-                                            Assigner
-                                        </Button>
-                                    )}
-                                </td>
+                                    </td>
+                                    ) : (
+                                        <>
+                                        <td>
+                                            <Button
+                                                variant="primary"
+                                                onClick={() => assignUserToTask(task.task_id)}
+                                            >
+                                                Assigner
+                                            </Button>
+                                            </td>
+                                            <td>
+                                            <DeleteTask task={task} onTaskDeleted={fetchTasks} />
+                                        </td>
+                                        </>
+                                    )
+                                }
                             </tr>
+
                         ))}
                     </tbody>
                 </table>

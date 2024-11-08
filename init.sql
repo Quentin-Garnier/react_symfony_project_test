@@ -48,17 +48,18 @@ CREATE TABLE IF NOT EXISTS `users` (
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `assigned_tasks` JSON DEFAULT NULL,
-    `is_admin` BOOLEAN DEFAULT FALSE
+    `is_admin` BOOLEAN DEFAULT FALSE,
+    `super_admin` BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
 INSERT INTO `users` (`nom`, `prenom`, `email`, `password`, `assigned_tasks`, `is_admin`) VALUES
-('Dupont', 'Jean', 'jean.dupont@example.com', 'password123', NULL, TRUE),
-('Martin', 'Sophie', 'sophie.martin@example.com', 'password456', NULL, FALSE),
-('Durand', 'Pierre', 'pierre.durand@example.com', 'password789', NULL, FALSE),
-('Leroy', 'Lucie', 'lucie.leroy@example.com', 'password012', NULL, FALSE),
-('Moreau', 'Clément', 'clement.moreau@example.com', 'password345', NULL, FALSE);
+('Dupont', 'Jean', 'jean.dupont@example.com', 'password123', NULL, TRUE, TRUE),
+('Martin', 'Sophie', 'sophie.martin@example.com', 'password456', NULL, TRUE, FALSE),
+('Durand', 'Pierre', 'pierre.durand@example.com', 'password789', NULL, FALSE, FALSE),
+('Leroy', 'Lucie', 'lucie.leroy@example.com', 'password012', NULL, FALSE, FALSE),
+('Moreau', 'Clément', 'clement.moreau@example.com', 'password345', NULL, FALSE, FALSE);
 
 
 
@@ -74,9 +75,35 @@ CREATE TABLE IF NOT EXISTS `tasks` (
 
 
 
-INSERT INTO `tasks`(`nom`, `description`, `assigned_users`) VALUES 
-('Design Homepage', 'Create the layout for the new homepage including navigation and footer.', NULL), 
-('Implement User Authentication', 'Develop user registration and login features using JWT.', NULL), 
-('Set Up Database', 'Configure the MySQL database and set up the initial schema.', NULL), 
-('Write API Documentation', 'Document the REST API endpoints and usage instructions.', NULL), 
-('Conduct User Testing', 'Perform usability testing with a group of selected users and gather feedback.', NULL);
+INSERT INTO `tasks`(`nom`, `description`, `assigned_users`) VALUES
+('Design Homepage', 'Create the layout for the new homepage including navigation and footer.', NULL),
+('Implement User Authentication maybe', 'Develop user registration and login features using JWT.', NULL),
+('Set Up Database', 'Configure the MySQL database and set up the initial schema.', JSON_ARRAY(2, 4)),
+('Write API Documentation', 'Document the REST API endpoints and usage instructions.', JSON_ARRAY(1)),
+('Conduct User Testing', 'Perform usability testing with a group of selected users and gather feedback.', JSON_ARRAY(1, 4)),
+('Tâche 2', 'Description de la tâche 2', NULL),
+('Tâche 3', 'Description de la tâche 3', JSON_ARRAY(3)),
+('Tâche 1', 'Description de la tâche 1', JSON_ARRAY(2)),
+('tets csv', 'fichier de test csv', JSON_ARRAY(4, 1));
+
+
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS `responses` (
+    `response_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nom` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NOT NULL,
+    `assigned_task` JSON NOT NULL,
+    `responding_user` INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+INSERT INTO `responses`(`nom`, `description`, `assigned_task`, `responding_user`) VALUES
+('test csv', 'Fichier de test csv', 3, 2),
+('truc', 'blablabla', 3, 2),
+('Réunion', 'Préparer la présentation pour la réunion de demain', 3, 3),
+('Plan', 'Plan du test', 8, 2);
