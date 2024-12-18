@@ -6,39 +6,63 @@ class DataCampagne
 {
     // Tableau statique contenant les campagnes
     private static array $campagnes = array (
-        '2024-12-amazon-cybermonday' => 
-        array (
-            'campagne' => '2024-12-amazon-cybermonday',
-            'title' => 'Amazon Cyber Monday 2024',
-            'id_annonceur' => 1250,
-            'active' => true,
-            'form' => 'form_amazon_cybermonday',
-            'postback' => '',
-            'url_postback' => '',
-            'data_webservice' => 
-            array (
-                'ws_model' => 'webservices/Api_amazon_cybermonday_model',
-                'ws' => 'PreparationEnvoiLead',
-            ),
-        ),
-    );
+  '2024-12-winter-sale' => 
+  array (
+    'campagne' => '2024-12-winter-sale',
+    'title' => 'Winter Sale 2024',
+    'id_annonceur' => 1234,
+    'active' => true,
+    'form' => 'form_winter_sale',
+    'postback' => '',
+    'url_postback' => '',
+    'no_ws' => true,
+  ),
+  '2024-12-amazon-cybermonday' => 
+  array (
+    'campagne' => '2024-12-amazon-cybermonday',
+    'title' => 'Amazon Cyber Monday 2024',
+    'id_annonceur' => 1250,
+    'active' => true,
+    'form' => 'form_amazon_cybermonday',
+    'postback' => '',
+    'url_postback' => '',
+    'data_webservice' => 
+    array (
+      'ws_model' => 'webservices/Api_amazon_cybermonday_model',
+      'ws' => 'PreparationEnvoiLead',
+    ),
+  ),
+);
 
 
     private static array $forms = array (
-        'form_amazon_cybermonday' => 
-        array (
-            'fields' => 
-            array (
-            'nom' => 'text',
-            'email' => 'email',
-            'telephone' => 'tel',
-            'adresse' => 'text',
-            'code_postal' => 'text',
-            'ville' => 'text',
-            'pays' => 'text',
-            ),
-        ),
-    );
+  'form_winter_sale' => 
+  array (
+    'fields' => 
+    array (
+      'prenom' => 'text',
+      'nom' => 'text',
+      'email' => 'email',
+      'telephone' => 'text',
+      'entreprise' => 'text',
+      'fonction' => 'text',
+      'nb_salaries' => 'number',
+    ),
+  ),
+  'form_amazon_cybermonday' => 
+  array (
+    'fields' => 
+    array (
+      'nom' => 'text',
+      'email' => 'email',
+      'telephone' => 'tel',
+      'adresse' => 'text',
+      'code_postal' => 'text',
+      'ville' => 'text',
+      'pays' => 'text',
+    ),
+  ),
+);
 
     
 
