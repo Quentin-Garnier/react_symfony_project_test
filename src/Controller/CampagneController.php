@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CampagneController extends AbstractController
 {
@@ -136,21 +137,22 @@ class CampagneController extends AbstractController
         ];
 
         // Contenus pour chaque fichier Twig
-        $contents = [
-            'landing' => "{% block body %}\n<h2>Formulaire pour {{ campagneTitle }}</h2>\n",
-            'recap' => "{% block body %}\n<h2>Récapitulatif pour {$campagneTitle}</h2>\n",
-        ];
-
-        // Ajouter le code du formulaire dynamique dans le template 'landing'
-        $contents['landing'] .= "{{ formHtml|raw }}\n";
-        // Ajouter le récapitulatif des champs dans le template 'recap'
-        foreach ($formFields as $fieldName => $fieldType) {
-            $contents['recap'] .= "<li><strong>" . ucfirst($fieldName) . ":</strong></li>\n";
-        }
-
-        // Ajouter la fin des blocs
-        $contents['landing'] .= "{% endblock %}";
-        $contents['recap'] .= "{% endblock %}";
+    $contents = [
+        'landing' => "{% block body %}\n<h2>Formulaire pour {{ campagneTitle }}</h2>\n"
+            . "<form action=\"/view/{{slug}}/recap\" method=\"POST\">\n"
+            . "{{ formHtml|raw }}\n"
+            . "<button type=\"submit\" class=\"btn btn-primary\">Envoyer</button>\n"
+            . "</form>\n"
+            . "{% endblock %}",
+        
+        'recap' => "{% block body %}\n<h2>Récapitulatif pour {{ campagneTitle }}</h2>\n"
+            . "<ul>\n"
+            . "{% for field, value in formData %}\n"
+            . "<li><strong>{{ field|capitalize }}:</strong> {{ value }}</li>\n"
+            . "{% endfor %}\n"
+            . "</ul>\n"
+            . "{% endblock %}",
+    ];
 
         // Générer les fichiers Twig si nécessaire
         foreach ($templates as $key => $templatePath) {
@@ -177,9 +179,8 @@ class CampagneController extends AbstractController
         $html = '';
         foreach ($formFields as $field => $type) {
             $html .= "<div class=\"form-group\">
-                        <label for=\"{$field}\">" . ucfirst($field) . "</label>
-                        <input type=\"{$type}\" id=\"{$field}\" name=\"{$field}\" class=\"form-control\" />
-                      </div>";
+                    <input type=\"{$type}\" id=\"{$field}\" name=\"{$field}\" placeholder=\"" . ucfirst($field) . "\" class=\"form-control\" required />
+                  </div>";
         }
         return $html;
     }
@@ -206,6 +207,7 @@ class CampagneController extends AbstractController
             'message' => "Vue chargée pour le slug '{$slug}'",
             'formHtml' => $formHtml, // Passer les champs du formulaire à Twig
             'campagneTitle' => "Campagne {$slug}",
+            'slug' => $slug,
         ]);
     }
 
@@ -233,19 +235,86 @@ class CampagneController extends AbstractController
 
 
 
-
-
-
-    #[Route('/view/{slug}/recap', name: 'view_recap_by_slug', methods: ['GET'])]
-    public function viewRecapBySlug(string $slug): Response
+    #[Route('/view/{slug}/recap', name: 'post_datas', methods: ['POST'])]
+    public function recap(Request $request, string $slug, EntityManagerInterface $db): Response
     {
-        // Charger la vue Twig correspondant au slug
+        // Récupérer les informations de la campagne
+        $campagne = DataCampagne::getAllCampagnes();
+        $campagne = $campagne[$slug];
+        $id_anonceur = $campagne['id_annonceur'];
+
+        // Récupérer les données du formulaire
+        $formData = $request->request->all();
+
+        // Ajouter id_annonceur au début du tableau
+        $formData = array_merge(['id_annonceur' => $id_anonceur], $formData);
+
+
+        $this->processFormData($db, $formData);
+
+
         $templatePath = "/{$slug}/recap.html.twig";
 
-        // Renvoyer la vue avec des données éventuelles
+        // Traiter les données reçues
+        // ...
+
+        // Retourner un message de succès
         return $this->render($templatePath, [
-            'slug' => $slug,
-            'message' => "Vue chargée pour le slug '{$slug}'",
+            'formData' => $formData,
+            'campagneTitle' => "Campagne {$slug}",
+            'campagne' => $campagne,
         ]);
     }
+
+
+
+    private function processFormData(EntityManagerInterface $db, array $data): void
+    {
+        // Colonnes définies dans la table
+        $columns = ['id_annonceur', 'prenom', 'nom', 'email', 'adresse', 'date_naissance', 'code_postal', 'ville', 'telephone'];
+
+        // Initialisation des données à insérer
+        $mappedData = [];
+        $others = [];
+
+        // Parcourir les données d'entrée
+        foreach ($data as $key => $value) {
+            if (in_array($key, $columns)) {
+                // Si la clé correspond à une colonne, on la garde pour une insertion directe
+                $mappedData[$key] = $value;
+            } else {
+                // Sinon, elle va dans "autres"
+                $others[$key] = $value;
+            }
+        }
+
+        // Ajouter les données restantes dans le champ "autres" sous forme de JSON
+        $mappedData['autres'] = json_encode($others);
+
+        // Préparer et exécuter l'insertion
+        $connection = $db->getConnection();
+        $queryBuilder = $connection->createQueryBuilder();
+
+        $queryBuilder->insert('table_collecte');
+
+        foreach ($mappedData as $column => $value) {
+            $queryBuilder->setValue("`$column`", ":$column");
+            $queryBuilder->setParameter($column, $value);
+        }
+
+        //Debug SQL avant exécution
+        // var_dump($queryBuilder->getSQL(), $queryBuilder->getParameters());
+        // exit;
+
+
+        try {
+            $queryBuilder->executeStatement();
+        } catch (\Exception $e) {
+            // Affiche l'erreur SQL pour le debug
+            var_dump($e->getMessage());
+            exit;
+        }
+        
+    }
+    
 }

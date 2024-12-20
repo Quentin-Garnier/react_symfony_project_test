@@ -1,0 +1,8 @@
+{% block body %}
+<h2>Récapitulatif pour {{ campagneTitle }}</h2>
+<ul>
+{% for field, value in formData %}
+<li><strong>{{ field|capitalize }}:</strong> {{ value }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

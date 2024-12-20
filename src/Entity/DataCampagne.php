@@ -6,6 +6,38 @@ class DataCampagne
 {
     // Tableau statique contenant les campagnes
     private static array $campagnes = array (
+  '2024-12-amazon-cybermonday' => 
+  array (
+    'campagne' => '2024-12-amazon-cybermonday',
+    'title' => 'Amazon Cyber Monday 2024',
+    'id_annonceur' => 1250,
+    'active' => true,
+    'form' => 'form_amazon_cybermonday',
+    'postback' => '',
+    'url_postback' => '',
+    'no_ws' => false,
+    'data_webservice' => 
+    array (
+      'ws_model' => 'Api_amazon_cybermonday_model',
+      'ws' => 'PreparationEnvoiLead',
+    ),
+  ),
+  '2025-06-summer-discount' => 
+  array (
+    'campagne' => '2025-06-summer-discount',
+    'title' => 'Summer Discount 2025',
+    'id_annonceur' => 5678,
+    'active' => true,
+    'form' => 'form_summer_discount',
+    'postback' => '',
+    'url_postback' => '',
+    'no_ws' => false,
+    'data_webservice' => 
+    array (
+      'ws_model' => 'Api_summer_discount_model',
+      'ws' => 'SendDiscountLead',
+    ),
+  ),
   '2024-12-winter-sale' => 
   array (
     'campagne' => '2024-12-winter-sale',
@@ -17,38 +49,10 @@ class DataCampagne
     'url_postback' => '',
     'no_ws' => true,
   ),
-  '2024-12-amazon-cybermonday' => 
-  array (
-    'campagne' => '2024-12-amazon-cybermonday',
-    'title' => 'Amazon Cyber Monday 2024',
-    'id_annonceur' => 1250,
-    'active' => true,
-    'form' => 'form_amazon_cybermonday',
-    'postback' => '',
-    'url_postback' => '',
-    'data_webservice' => 
-    array (
-      'ws_model' => 'webservices/Api_amazon_cybermonday_model',
-      'ws' => 'PreparationEnvoiLead',
-    ),
-  ),
 );
 
 
     private static array $forms = array (
-  'form_winter_sale' => 
-  array (
-    'fields' => 
-    array (
-      'prenom' => 'text',
-      'nom' => 'text',
-      'email' => 'email',
-      'telephone' => 'text',
-      'entreprise' => 'text',
-      'fonction' => 'text',
-      'nb_salaries' => 'number',
-    ),
-  ),
   'form_amazon_cybermonday' => 
   array (
     'fields' => 
@@ -60,6 +64,36 @@ class DataCampagne
       'code_postal' => 'text',
       'ville' => 'text',
       'pays' => 'text',
+    ),
+  ),
+  'form_summer_discount' => 
+  array (
+    'fields' => 
+    array (
+      'prenom' => 'text',
+      'nom' => 'text',
+      'email' => 'email',
+      'telephone' => 'text',
+      'adresse' => 'text',
+      'code_postal' => 'text',
+      'ville' => 'text',
+      'company_name' => 'text',
+      'job_title' => 'text',
+      'company_size' => 'number',
+      'budget' => 'number',
+    ),
+  ),
+  'form_winter_sale' => 
+  array (
+    'fields' => 
+    array (
+      'prenom' => 'text',
+      'nom' => 'text',
+      'email' => 'email',
+      'telephone' => 'text',
+      'entreprise' => 'text',
+      'fonction' => 'text',
+      'nb_salaries' => 'number',
     ),
   ),
 );

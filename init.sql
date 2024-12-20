@@ -107,3 +107,22 @@ INSERT INTO `responses`(`nom`, `description`, `assigned_task`, `responding_user`
 ('truc', 'blablabla', 3, 2),
 ('Réunion', 'Préparer la présentation pour la réunion de demain', 3, 3),
 ('Plan', 'Plan du test', 8, 2);
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS `table_collecte` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `id_annonceur` INT NOT NULL,
+    `prénom` VARCHAR(150) NULL,
+    `nom` VARCHAR(150) NOT NULL,
+    `email` VARCHAR(150) NOT NULL,
+    `adresse` VARCHAR(250) NOT NULL,
+    `date_naissance` VARCHAR(10) NOT NULL,
+    `code_postal` VARCHAR(5) NOT NULL,
+    `ville` VARCHAR(255) NOT NULL,
+    `téléphone` VARCHAR(10) NOT NULL,
+    `autres` TEXT NOT NULL,
+    `date_add` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
