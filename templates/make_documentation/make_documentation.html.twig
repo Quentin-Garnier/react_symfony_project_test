@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une documentation{% endblock %}
+
+{% block body %}
+    <h1>Créer une documentation</h1>
+
+    {{ form_start(form) }}
+    
+        <div>
+            <div class="form-group">
+                {{ form_label(form.docName) }}
+                {{ form_widget(form.docName, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.url) }}
+                {{ form_widget(form.url, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        
+
+        <div id="fields-container" data-prototype="{{ form_widget(form.fields.vars.prototype)|e('html') }}" data-index="0">
+            {% for field in form.fields %}
+                <div>
+                    {{ form_widget(field) }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-field" class="btn btn-primary">Ajouter un champ</button>
+
+        <div class="mt-3">
+            {{ form_row(form.generate) }}
+        </div>
+    {{ form_end(form) }}
+
+    <script>
+        // Gestion de l'ajout dynamique des champs
+        document.getElementById('add-field').addEventListener('click', function () {
+            let container = document.getElementById('fields-container');
+
+            // Récupérer le prototype défini dans les attributs data
+            let prototype = container.dataset.prototype;
+            let index = container.dataset.index || container.children.length;
+
+            // Remplacer __name__ par l'index courant
+            let newField = prototype.replace(/__name__/g, index);
+
+            // Ajouter le nouvel élément au container
+            let div = document.createElement('div');
+            div.innerHTML = newField;
+            container.appendChild(div);
+
+            // Mettre à jour l'index
+            container.dataset.index = ++index;
+        });
+    </script>
+{% endblock %}

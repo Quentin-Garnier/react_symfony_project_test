@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ docName }}</h1>
+    <p>URL: {{ url }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Valeur par défaut</th>
+                <th>Règle</th>
+                <th>Requis</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in fields %}
+                <tr>
+                    <td>{{ field.name }}</td>
+                    <td>{{ field.value }}</td>
+                    <td>{{ field.rule }}</td>
+                    <td>{{ field.isRequired is defined ? 'Oui' : 'Non' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
