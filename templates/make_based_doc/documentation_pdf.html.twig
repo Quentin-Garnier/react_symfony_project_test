@@ -1,0 +1,31 @@
+{# templates/make_based_doc/documentation.html.twig #}
+
+<h1>Documentation pour la campagne : {{ campagne.title }}</h1>
+
+<h2>Détails de la campagne</h2>
+<ul>
+    <li><strong>Method :</strong> JSON</li>
+    <li><strong>URL :</strong> http://localhost:8000/sendLead</li>
+</ul>
+
+<h2>Champs à POST</h2>
+<table style="width: 100%; border: 1px solid black; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="border: 1px solid black; padding: 5px; text-align: left;">Champ</th>
+            <th style="border: 1px solid black; padding: 5px; text-align: left;">Valeur</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">id_annonceur</td>
+            <td style="border: 1px solid black; padding: 5px;">{{ campagne.id_annonceur }}</td>
+        </tr>
+        {% for field, type in form.fields %}
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">{{ field }}</td>
+            <td style="border: 1px solid black; padding: 5px;">{{ type }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

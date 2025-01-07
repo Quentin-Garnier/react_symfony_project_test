@@ -6,6 +6,38 @@ class DataCampagne
 {
     // Tableau statique contenant les campagnes
     private static array $campagnes = array (
+  '2025-04-easter-promo' => 
+  array (
+    'campagne' => '2025-04-easter-promo',
+    'title' => 'Easter Promotion 2025',
+    'id_annonceur' => 1400,
+    'active' => true,
+    'form' => 'form_easter_promo',
+    'postback' => '',
+    'url_postback' => '',
+    'no_ws' => false,
+    'data_webservice' => 
+    array (
+      'ws_model' => 'Api_easter_promo_model',
+      'ws' => 'RegisterEasterParticipant',
+    ),
+  ),
+  '2025-02-valentinesday-special' => 
+  array (
+    'campagne' => '2025-02-valentinesday-special',
+    'title' => 'Valentine\'s Day Special 2025',
+    'id_annonceur' => 1300,
+    'active' => true,
+    'form' => 'form_valentinesday_special',
+    'postback' => '',
+    'url_postback' => '',
+    'no_ws' => false,
+    'data_webservice' => 
+    array (
+      'ws_model' => 'Api_valentinesday_special_model',
+      'ws' => 'SubmitLeadData',
+    ),
+  ),
   '2024-12-amazon-cybermonday' => 
   array (
     'campagne' => '2024-12-amazon-cybermonday',
@@ -53,6 +85,35 @@ class DataCampagne
 
 
     private static array $forms = array (
+  'form_easter_promo' => 
+  array (
+    'fields' => 
+    array (
+      'full_name' => 'text',
+      'email' => 'email',
+      'phone_number' => 'tel',
+      'street_address' => 'text',
+      'postal_code' => 'text',
+      'city' => 'text',
+      'country' => 'text',
+      'favorite_easter_treat' => 'text',
+    ),
+  ),
+  'form_valentinesday_special' => 
+  array (
+    'fields' => 
+    array (
+      'first_name' => 'text',
+      'last_name' => 'text',
+      'email' => 'email',
+      'phone' => 'tel',
+      'address' => 'text',
+      'zip_code' => 'text',
+      'city' => 'text',
+      'country' => 'text',
+      'gift_preference' => 'text',
+    ),
+  ),
   'form_amazon_cybermonday' => 
   array (
     'fields' => 

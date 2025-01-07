@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Créer une documentation basée sur une campagne</h1>
+    {{ form_start(form, {'attr': {'target': '_blank'}}) }}
+        {{ form_row(form.campagne) }}
+        {{ form_row(form.generate) }}
+    {{ form_end(form) }}
+{% endblock %}

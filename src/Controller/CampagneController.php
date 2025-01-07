@@ -59,15 +59,15 @@ class CampagneController extends AbstractController
 
         // Traitement des formulaires
         if (isset($data['form']) && is_array($data['form'])) {
-            $newForm = [];
-            foreach ($data['form'] as $field) {
-                if (isset($field['field'], $field['type'])) {
-                    $newForm[] = array(
-                        'name' => $field['field'],
-                        'type' => $field['type']
-                    );
-                }
-            }
+            // $newForm = [];
+            // foreach ($data['form'] as $field) {
+            //     if (isset($field['field'], $field['type'])) {
+            //         $newForm[] = array(
+            //             'name' => $field['field'],
+            //             'type' => $field['type']
+            //         );
+            //     }
+            // }
 
             // return new JsonResponse([
             //     $newForm
