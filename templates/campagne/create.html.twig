@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Créer une campagne</h1>
+
+    {{ form_start(form) }}
+
+        {# Bloc des champs permanents #}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Informations principales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.campagne) }}
+                        {{ form_widget(form.campagne, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.campagne) }}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.title) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.id_annonceur) }}
+                        {{ form_widget(form.id_annonceur, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.id_annonceur) }}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.active) }}
+                        {{ form_widget(form.active, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.active) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.form) }}
+                        {{ form_widget(form.form, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.form) }}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.postback) }}
+                        {{ form_widget(form.postback, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.postback) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.url_postback) }}
+                        {{ form_widget(form.url_postback, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.url_postback) }}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.no_ws) }}
+                        {{ form_widget(form.no_ws, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.no_ws) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.ws_model) }}
+                        {{ form_widget(form.ws_model, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.ws_model) }}
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        {{ form_label(form.ws) }}
+                        {{ form_widget(form.ws, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.ws) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Bloc des champs dynamiques (form_fields) #}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Champs à POST</h5>
+            </div>
+            <div class="card-body">
+                <div data-prototype="{{ form_widget(form.form_fields.vars.prototype)|e('html') }}" id="form_fields_container">
+                    {{ form_widget(form.form_fields) }}
+                </div>
+                {{ form_errors(form.form_fields) }}
+                <button type="button" class="btn btn-primary mt-3" id="add_field_button">Ajouter un champ</button>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-success">Enregistrer la campagne</button>
+        </div>
+
+    {{ form_end(form) }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addFieldButton = document.getElementById('add_field_button');
+            const formFieldsContainer = document.getElementById('form_fields_container');
+            const prototype = formFieldsContainer.dataset.prototype;
+            let index = formFieldsContainer.dataset.index;
+
+            // Fonction pour ajouter un champ à la collection form_fields
+            addFieldButton.addEventListener('click', function() {
+                const newField = prototype.replace(/__name__/g, index);
+                formFieldsContainer.dataset.index++;
+                const newDiv = document.createElement('div');
+                newDiv.innerHTML = newField;
+                newDiv.classList.add('form-group', 'mt-3', 'p-3', 'border', 'rounded', 'bg-light');
+
+                // Ajouter un bouton de suppression pour chaque champ
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.classList.add('btn', 'btn-danger', 'delete-field', 'mt-2');
+                deleteButton.textContent = 'Supprimer ce champ';
+                deleteButton.addEventListener('click', function() {
+                    newDiv.remove();
+                });
+
+                newDiv.appendChild(deleteButton);
+                formFieldsContainer.appendChild(newDiv);
+            });
+
+            // Gestion dynamique des champs ws_model et ws en fonction de no_ws
+            const noWsSelect = document.querySelector('[name="{{ form.no_ws.vars.full_name }}"]');
+            const wsModelGroup = document.getElementById('campagne_ws_model');
+            const wsGroup = document.getElementById('campagne_ws');
+
+            // Fonction pour afficher ou masquer les champs ws_model et ws en fonction de no_ws
+            const toggleWsFields = function() {
+                if (noWsSelect.value === '0') {  // "No" est sélectionné
+                    wsModelGroup.closest('.form-group').style.display = 'block';
+                    wsGroup.closest('.form-group').style.display = 'block';
+                    wsModelGroup.disabled = false;
+                    wsGroup.disabled = false;
+                    // Mettre les champs ws_model et ws à required
+                    wsModelGroup.required = true;
+                    wsGroup.required = true;
+                } else {  // "Yes" est sélectionné
+                    wsModelGroup.closest('.form-group').style.display = 'none';
+                    wsGroup.closest('.form-group').style.display = 'none';
+                    wsModelGroup.disabled = true;
+                    wsGroup.disabled = true;
+                    // Enlever le required des champs ws_model et ws
+                    wsModelGroup.required = false;
+                    wsGroup.required = false;
+                }
+            };
+
+            // Écouter le changement de valeur de no_ws pour ajuster l'affichage de ws_model et ws
+            if (noWsSelect) {
+                noWsSelect.addEventListener('change', toggleWsFields);
+            }
+
+            // Initialisation de l'affichage en fonction de la valeur actuelle de no_ws
+            toggleWsFields();
+        });
+    </script>
+
+{% endblock %}

@@ -10,9 +10,36 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\CampagneType;
 
 class CampagneController extends AbstractController
 {
+    #[Route('/campagne/create', name: 'campagne_create')]
+    public function createCampagne(Request $request): Response
+    {
+        $form = $this->createForm(CampagneType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            echo json_encode($data);
+            exit;
+
+            // Enregistrer ou traiter les données ici
+            return $this->json([
+                'message' => 'Campagne enregistrée',
+                'data' => $data,
+            ]);
+        }
+
+        return $this->render('campagne/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+    
     #[Route('/api/campagne/create', name: 'create_campagne', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
