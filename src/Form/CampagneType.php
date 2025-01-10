@@ -19,7 +19,7 @@ class CampagneType extends AbstractType
     {
         $builder
             ->add('campagne', TextType::class, [
-                'label' => 'Nom de la campagne',
+                'label' => 'Campagne',
                 'required' => true,
             ])
             ->add('title', TextType::class, [
@@ -43,11 +43,11 @@ class CampagneType extends AbstractType
             ])
             ->add('postback', TextType::class, [
                 'label' => 'Postback',
-                'required' => true,
+                'required' => false,
             ])
             ->add('url_postback', TextType::class, [
                 'label' => 'URL Postback',
-                'required' => true,
+                'required' => false,
             ])
             ->add('no_ws', ChoiceType::class, [
                 'label' => 'No WS',
